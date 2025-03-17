@@ -24,7 +24,15 @@ mean = prediction[:, 0]
 variance = prediction[:, 1]
 print(f'{mean=}, {variance=}')
 ```
-The mean can be used as a scalar prediction of MOS. Recommended input duration is 10 s, and should be of 16 kHz sample rate. 
+The mean can be used as a scalar prediction of MOS. Recommended input duration is 10 s, and should be of 16 kHz sample rate.
+
+## Installation
+Installation with pip:
+```
+pip install -r requirements.txt
+pip install torch==2.1.0+cu118 --index-url https://download.pytorch.org/whl/cu118
+```
+
 ## Dataset preparation
 [VCC2018](https://github.com/unilight/LDNet/tree/main/data)
 
