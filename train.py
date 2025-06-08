@@ -169,7 +169,7 @@ class TrainingLoop:
         del loss
 
         # Gradient clipping
-        grad_norm = nn.utils.clip_grad_norm_(self._model.parameters(), max_norm=5)
+        nn.utils.clip_grad_norm_(self._model.parameters(), max_norm=5)
         self._optimizer.step()
         self._optimizer.zero_grad()
     
@@ -182,8 +182,7 @@ class TrainingLoop:
         self._model.train()
         while self._epoch <= self._num_epochs:
             self._all_loss = list()
-            #if self._epoch == 20:
-            #    self._optimizer_momentum.set_alpha(0.999)
+
             for batch in tqdm.tqdm(
                 self._train_loader,
                 ncols=0,
@@ -196,7 +195,7 @@ class TrainingLoop:
             logging.info(f'Average loss={average_loss}')
 
             if valid_each_epoch:
-                _ = self.valid()
+                self.valid()
             self._epoch += 1
 
     def _evaluate(self, dataloader: Any, prefix: str):
@@ -212,11 +211,11 @@ class TrainingLoop:
         )):
             wav, label = batch
             wav = wav.to(self._device)
-            wav = wav.unsqueeze(1) # shape (batch, 1, seq_len, [dim feature])
+            wav = wav.unsqueeze(1)
 
             with torch.no_grad():
                 try:
-                    prediction = self._model(wav) # shape (batch, 1)
+                    prediction = self._model(wav)
                     if self._frame_level_loss:
                         prediction = torch.mean(prediction.squeeze(-1), dim=-1).unsqueeze(-1)
                     if self._loss_type == 'gnll':
@@ -237,9 +236,9 @@ class TrainingLoop:
 
         predictions = np.array(predictions)
         labels = np.array(labels)
-        utt_mse=np.mean((labels-predictions)**2)
-        utt_pcc=np.corrcoef(labels, predictions)[0][1]
-        utt_srcc=scipy.stats.spearmanr(labels, predictions)[0]
+        utt_mse = np.mean((labels - predictions)**2)
+        utt_pcc = np.corrcoef(labels, predictions)[0][1]
+        utt_srcc = scipy.stats.spearmanr(labels, predictions)[0]
         if utt_pcc > self._best_pcc:
             self._best_pcc = utt_pcc
             self.save_model('model_best.pt')
