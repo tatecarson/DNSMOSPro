@@ -14,7 +14,7 @@ import torch
 
 import utils  # Python file containing the STFT.
 
-model = torch.jit.load('runs/test_nisqa/model_best.pt', map_location=torch.device('cpu'))
+model = torch.jit.load('runs/NISQA/model_best.pt', map_location=torch.device('cpu'))
 samples = np.ones(160_000)
 # Defaults in `utils.stft` correspond to training values.
 spec = torch.FloatTensor(utils.stft(samples))
